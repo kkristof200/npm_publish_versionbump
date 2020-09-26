@@ -57,7 +57,7 @@ for version_comp in version_comps:
     try:
         version_comp_numbers.append(int(version_comp))
     except:
-        pass
+        version_comp_numbers.append(0)
 
 while len(version_comp_numbers) < 3:
     version_comp_numbers.append(0)
