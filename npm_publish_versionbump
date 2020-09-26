@@ -51,6 +51,7 @@ if 'version' not in package_json:
     package_json['version'] = '0.0.0'
 
 version_comps = package_json['version'].split('.')
+print('version_comps', version_comps)
 version_comp_numbers = []
 
 for version_comp in version_comps:
@@ -62,6 +63,8 @@ for version_comp in version_comps:
 while len(version_comp_numbers) < 3:
     version_comp_numbers.append(0)
 
+print('version_comp_numbers', version_comp_numbers)
+
 if contains_arg(['major', 'maj']):
     version_comp_numbers[0] += 1
 elif contains_arg(['minor', 'min']):
@@ -69,7 +72,7 @@ elif contains_arg(['minor', 'min']):
 else:#elif contains_arg(['patch', 'pat', 'p']):
     version_comp_numbers[2] += 1
 
-package_json['version'] = '.'.join([str(num) for num in version_comp_numbers[0]])
+package_json['version'] = '.'.join([str(num) for num in version_comp_numbers])
 
 with open(package_json_path, 'w') as f:
     json.dump(package_json, f, indent=4)
