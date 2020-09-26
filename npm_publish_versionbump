@@ -64,8 +64,11 @@ while len(version_comp_numbers) < 3:
 
 if contains_arg(['major', 'maj']):
     version_comp_numbers[0] += 1
+    version_comp_numbers[1] = 0
+    version_comp_numbers[2] = 0
 elif contains_arg(['minor', 'min']):
     version_comp_numbers[1] += 1
+    version_comp_numbers[2] = 0
 else:#elif contains_arg(['patch', 'pat', 'p']):
     version_comp_numbers[2] += 1
 
