@@ -1,0 +1,77 @@
+#!/usr/bin/env python3
+
+
+# IMPORTS
+from typing import Optional, List
+import os, sys, json
+
+# FUNCTIONS
+def sh(cmd: str):
+    import subprocess
+
+    return subprocess.getstatusoutput(cmd)
+
+def loadJson(path: str) -> Optional[dict]:
+    try:
+        with open(path, 'r') as f:
+            return json.load(f)
+    except:
+        return None
+
+def contains_arg(args: List[str]):
+    for arg in args:
+        for sys_arg in sys.argv:
+            if arg.lower() == sys_arg.lower().strip('-'):
+                return True
+
+if contains_arg(['help', 'h']):
+    print(
+'''Usage
+
+    cd to_folder_path_of_package_to_publish
+
+    npm_publish_versionbump [options]
+
+    Supported options:
+        major, maj -        changes the major version (1.0.0 -> 2.0.0)
+        minor, min -        changes the minor version (0.1.0 -> 0.2.0)
+        anything else -     changes the patch version (0.0.1 -> 0.0.2)'''
+)
+    exit(0)
+
+cwd = os.getcwd()
+# input('Current path: ' + cwd + '\nPlease ensure you\'re in the correct folder')
+package_json_path = os.path.join(cwd, 'package.json')
+package_json = loadJson(package_json_path)
+
+if not package_json:
+    sys.exit('No \'package.json\' file found in folder \'' + cwd + '\'')
+
+if 'version' not in package_json:
+    package_json['version'] = '0.0.0'
+
+version_comps = package_json['version'].split('.')
+version_comp_numbers = []
+
+for version_comp in version_comps:
+    try:
+        version_comp_numbers.append(int(version_comp))
+    except:
+        pass
+
+while len(version_comp_numbers) < 3:
+    version_comp_numbers.append(0)
+
+if contains_arg(['major', 'maj']):
+    version_comp_numbers[0] += 1
+elif contains_arg(['minor', 'min']):
+    version_comp_numbers[1] += 1
+else:#elif contains_arg(['patch', 'pat', 'p']):
+    version_comp_numbers[2] += 1
+
+package_json['version'] = '.'.join([str(num) for num in version_comp_numbers[0]])
+
+with open(package_json_path, 'w') as f:
+    json.dump(package_json, f, indent=4)
+
+print(sh('npm publish')[1])
